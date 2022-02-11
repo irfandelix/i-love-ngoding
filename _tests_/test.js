@@ -1,18 +1,27 @@
-# I Love Coding
-## Objectives
-- Mengerti cara menggunakan while
-- Mengerti cara menggunakan for
-## Directions
-### 1. Melakukan Looping Menggunakan For
-Pada tugas ini kamu diminta untuk melakukan looping dalam JavaScript dengan menggunakan syntax for. Untuk membuat tantangan ini lebih menarik, kamu juga diminta untuk membuat suatu looping yang menghitung maju dan menghitung mundur. Jangan lupa tampilkan di console juga judul 'LOOPING FOR PERTAMA' dan 'LOOPING FOR KEDUA'.
+const { execSync } = require('child_process')
+const fs = require('fs')
 
-### Hints
-Operator `++` disebut dengan operator _Increment_
-Operator `--` disebut dengan operator _Decrement_
+const reconstructedFilename = 'reconstructed.js'
 
-### Output
-```
-LOOPING FOR PERTAMA
+const loopString = () => {
+    let solution = fs.readFileSync('./index.js', 'utf-8')
+
+    fs.writeFileSync(reconstructedFilename, solution)
+
+    return String(execSync(`node ${reconstructedFilename}`))
+}
+
+const countLoop = () => {
+      let solution = fs.readFileSync('./index.js', 'utf-8')
+    
+      let countFor = (solution.toLowerCase().match(/for/g) || []).length;
+      let countWhile = (solution.toLowerCase().match(/while/g) || []).length;
+    
+      return {countFor, countWhile}
+}
+
+const hasil = () => {
+    return `LOOPING FOR PERTAMA
 1 - I love coding
 2 - I love coding
 3 - I love coding
@@ -54,12 +63,6 @@ LOOPING FOR KEDUA
 3 - I will become fullstack developer
 2 - I will become fullstack developer
 1 - I will become fullstack developer
-```
-### 2. While
-Pada tugas ini kamu diminta untuk melakukan looping dalam JavaScript dengan menggunakan syntax while. Untuk membuat tantangan ini lebih menarik, kamu juga diminta untuk membuat suatu looping yang menghitung maju dan menghitung mundur. Jangan lupa tampilkan di console juga judul 'LOOPING WHILE PERTAMA' dan 'LOOPING WHILE KEDUA'.
-
-### Output
-```
 LOOPING WHILE PERTAMA
 2 - I love coding
 4 - I love coding
@@ -81,5 +84,26 @@ LOOPING WHILE KEDUA
 8 - I will become fullstack developer
 6 - I will become fullstack developer
 4 - I will become fullstack developer
-2 - I will become fullstack developer
-```
+2 - I will become fullstack developer`
+}
+
+afterAll(() => {
+    if (fs.existsSync(reconstructedFilename)) {
+        fs.unlinkSync(reconstructedFilename)
+    }
+})
+
+describe('I Love Coding', () => {
+    describe('Check loops and message', () => {
+      it('should have minimum 2 for and 2 while loops', () => {
+        const {countFor, countWhile} = countLoop()
+        expect(countFor).toBeGreaterThanOrEqual(2)
+        expect(countWhile).toBeGreaterThanOrEqual(2)
+      })
+      it('should correctly print out message', () => {
+        const result = loopString()
+        expect(result).toMatch(hasil())
+      })
+    })
+  })
+
